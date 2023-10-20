@@ -2,30 +2,44 @@
 
 declare(strict_types=1);
 
-require 'UdpSocket.php';
+require 'TcpSocket.php';
 
-final class Client extends UdpSocket
+final class Client extends TcpSocket
 {
-    public function __invoke()
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->connect('127.0.0.1', 1111);
+    }
+
+    public function __invoke(): void
     {
         while (true) {
-            $serverIpAddr = '127.0.0.1';
-            $serverPort = 1111;
+            socket_getpeername($this->getListeningSocket(), $ipAddr, $port);
 
             do {
                 $message = readline('Write message: ');
             } while (!$message);
 
-            $this->sendDataTo($serverIpAddr, $serverPort, $message);
+            $this->writeToSocket($this->getListeningSocket(), $message);
 
-            echo "Message sent to $serverIpAddr:$serverPort\n\n";
+            echo "Message sent to $ipAddr:$port \n\n";
 
-            [$serverMessage, $serverIpAddr, $serverPort] = $this->receiveDataFrom();
+            $response = $this->readFromSocket($this->getListeningSocket());
 
-            echo "Message from $serverIpAddr:$serverPort:$serverMessage\n\n";
+            echo "Message from $ipAddr:$port: $response\n\n";
+        }
+    }
+
+    protected function connect(string $ipAddr, int $port): void
+    {
+        if (!socket_connect($this->getListeningSocket(), $ipAddr, $port)) {
+            $this->echoErrorAndExit();
         }
     }
 }
 
-$client = new Client('127.0.0.1', 2222);
+$client = new Client();
+
 $client();
