@@ -28,6 +28,8 @@ The object-oriented source code is written in the following files:
 - Server.php, which contains methods for TCP server and which will be executed and act as the server.
 - Client.php, which contains methods for TCP client and which will be executed and act as the client.
 
-The server and client communicate by exchanging messages entered via the terminal. The process involves waiting for user input on the client, which is then sent to the server after confirmation. The server receives the message and displays it in the terminal, and then it waits for the user's input, which will be sent to the client.
+The server is communicating with clients by exchanging messages via terminal and browser. The process involves waiting for user input on the client, which is then sent to the server after confirmation. The server receives the request and send response based on client request.
 
-To test this, you need to open one terminal and run the command "php Server.php" and in another terminal, run "php Client.php." This way, you can exchange messages between the server and the client.
+To test sending requests with terminal you need to run `php Server.php` and `php Client.php` in seperate terminals. In client's terminal type 'SIMPLE TIME' to get current time like response from server.
+To test sending GET requests with browser you need to run `php Server.php` in terminal. In the browser URL type ip_address:port (127.0.0.1:3456) and click enter. You should get html page with current time like response from server.
+
