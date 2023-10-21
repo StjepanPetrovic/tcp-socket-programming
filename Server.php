@@ -26,19 +26,31 @@ final class Server extends TcpSocket
 
             echo "Client $ipAddr:$port connected\n\n";
 
-            while (true) {
-                $response = $this->readFromSocket($this->clientSocket);
+            $request = $this->readFromSocket($this->clientSocket);
 
-                echo "Message from $ipAddr:$port: $response\n\n";
+            echo "Message from $ipAddr:$port: $request\n\n";
 
-                do {
-                    $message = readline('Write message: ');
-                } while (!$message);
+            $currentDate = date('d.m.Y. H:i:s');
 
-                $this->writeToSocket($this->clientSocket, $message);
+            if (str_starts_with($request, 'GET')) {
+                $http_response = "HTTP/1.1 200 OK\r\n";
+                $http_response .= "Content-Type: text/html\r\n";
+                $http_response .= "\r\n";
 
-                echo "Message sent to $ipAddr:$port\n\n";
+                $html_body = "<!DOCTYPE html><html><body><h1>$currentDate</h1></body></html>";
+
+                $response = $http_response . $html_body;
+            } elseif ($request === 'SIMPLE TIME') {
+                $response = $currentDate;
+            } else {
+                $response = 'Unknown command';
             }
+
+            $this->writeToSocket($this->clientSocket, $response);
+
+            echo "Client $ipAddr:$port disconnected\n\n";
+
+            socket_close($this->clientSocket);
         }
     }
 
@@ -66,6 +78,6 @@ final class Server extends TcpSocket
     }
 }
 
-$server = new Server('127.0.0.1', 1111);
+$server = new Server('127.0.0.1', 3456);
 
 $server();

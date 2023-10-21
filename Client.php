@@ -10,7 +10,7 @@ final class Client extends TcpSocket
     {
         parent::__construct();
 
-        $this->connect('127.0.0.1', 1111);
+        $this->connect('127.0.0.1', 3456);
     }
 
     public function __invoke(): void
@@ -19,7 +19,7 @@ final class Client extends TcpSocket
             socket_getpeername($this->getListeningSocket(), $ipAddr, $port);
 
             do {
-                $message = readline('Write message: ');
+                $message = readline('Write SIMPLE TIME or HTTP GET: ');
             } while (!$message);
 
             $this->writeToSocket($this->getListeningSocket(), $message);
